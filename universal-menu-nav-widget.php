@@ -13,7 +13,7 @@ class Universal_Nav_Menu_Widget extends WP_Widget {
   protected $urlprefix = 'https://s3-eu-west-1.amazonaws.com/cached-menus/';
 
   /**
-   * Register widget with WordPress.
+   * Register widget with WordPress
    */
   function __construct() {
     parent::__construct(
