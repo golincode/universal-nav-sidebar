@@ -38,7 +38,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
     if (!file_exists($cache)) {
         mkdir($cache, 0777, true);
     }
-    $file = $cache . '/latest_universal_nav_items_'.ICL_LANGUAGE_CODE.'.txt';
+    $file = $cache . '/latest_universal_nav_items_'.substr(get_locale(),0,2).'.txt';
     $current_time = time();
     $expire_time = 1 * 60 * 60;
 
@@ -104,7 +104,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
     $fields = [];
 
     $fields['api_key'] = $options[2]['api_key'];
-    $fields['language'] =  ICL_LANGUAGE_CODE;
+    $fields['language'] =  substr(get_locale(),0,2);
     $fields['market_id'] = get_option('cpg_options_market_id');
 
     $url = $this->urlprefix.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
