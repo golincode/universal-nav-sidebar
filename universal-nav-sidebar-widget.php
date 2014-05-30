@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: DiG Universal Nav Widget
+Plugin Name: DiG Universal Nav Sidebar Widget
 Plugin_URI: http://www.wearearchitect.com
 Description: A plugin that allows DiG Admins to display a main navigation with Dig Campaigns
 Version: 0.1.0
@@ -17,7 +17,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
    */
   function __construct() {
     parent::__construct(
-      'universal_nav_menu_widget', // Base ID
+      'universal_nav_sidebar_widget', // Base ID
       __('Universal Nav Sidebar', 'text_domain'), // Name
       array( 'description' => __( 'Universal Nav Sidebar Widget', 'text_domain' ), ) // Args
     );
@@ -56,7 +56,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
        $result = file_get_contents($file);
     }
 
-    echo $args['before_widget'];
+   // echo $args['before_widget'];
 
     if($result)
     {
@@ -64,15 +64,15 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
       $result = json_decode($result);
       if($result->status == 1)
       {
-          echo '<a style="background-image:url('.$result->logo.')" href="<?php echo home_url(\'/\'); ?>" class="logo">';
+          echo '<a style="background-image:url('.$result->logo.')" href="" class="logo">';
           bloginfo('name');
-          echo '</a>';
+          echo '</a><nav class="main-navigation">';
           $this->buildMenu($result);
           echo '<div class="social-media-menu"><div class="title">';
           _e('Follow us on', 'dirtisgood');
           echo '</div>';
           $this->buildSocial($result);
-          echo '</div>';
+          echo '</div></nav>';
       }
       else
       {
@@ -92,7 +92,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
       echo '<div class="error below-h2" id="message"><p>Error Connecting to the API.</p></div>';
     }
 
-    echo $args['after_widget'];
+    //echo $args['after_widget'];
   }
 
   /**
@@ -174,7 +174,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
      {
         if($social_channel->name != '')
         {
-           echo ' <li><a href="'.$social_channel->name.'" target="_blank" class=" link-'.strtolower($social_channel->name).' ct-click-event" data-ct="Custom:Social media link clicks:'.$social_channel->name.'"><img src="'.$social_channel->image.'"><i class="icon-'.strtolower($social_channel->name).'"></i>'.$social_channel->name.'</a></li>';
+           echo ' <li><a href="'.$social_channel->name.'" target="_blank" class=" link-'.strtolower($social_channel->name).' ct-click-event" data-ct="Custom:Social media link clicks:'.$social_channel->name.'"><img src="'.$social_channel->image.'">'.$social_channel->name.'</a></li>';
         }
      }
      echo '</ul>';
@@ -197,8 +197,8 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
 }
 
 // register Foo_Widget widget
-function register_universal_nav_menu_widget() {
-    register_widget( 'Universal_Nav_Menu_Widget' );
+function register_universal_nav_sidebar_widget() {
+    register_widget( 'Universal_Nav_Sidebar_Widget' );
 }
-add_action( 'widgets_init', 'register_universal_nav_menu_widget' );
+add_action( 'widgets_init', 'register_universal_nav_sidebar_widget' );
 
