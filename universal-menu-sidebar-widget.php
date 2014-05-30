@@ -8,7 +8,7 @@ Author: Sam Woolner
 Author URI: http://www.wearearchitect.com
 License: GPL2
 */
-class Universal_Nav_Menu_Widget extends WP_Widget {
+class Universal_Nav_Sidebar_Widget extends WP_Widget {
 
   protected $urlprefix = 'https://s3-eu-west-1.amazonaws.com/cached-menus/';
 
@@ -18,8 +18,8 @@ class Universal_Nav_Menu_Widget extends WP_Widget {
   function __construct() {
     parent::__construct(
       'universal_nav_menu_widget', // Base ID
-      __('Universal Nav Menu', 'text_domain'), // Name
-      array( 'description' => __( 'Universal Nav Menu Widget', 'text_domain' ), ) // Args
+      __('Universal Nav Sidebar', 'text_domain'), // Name
+      array( 'description' => __( 'Universal Nav Sidebar Widget', 'text_domain' ), ) // Args
     );
   }
 
