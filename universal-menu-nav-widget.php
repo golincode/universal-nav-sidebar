@@ -154,7 +154,7 @@ class Universal_Nav_Menu_Widget extends WP_Widget {
     echo '<ul class="sub-menu">';
       foreach($result->navitems as $navitem)
       {
-        if($navitem->menu_item_parent == $thisNavitem->wpid)
+        if($navitem->parent == $thisNavitem->wpid)
         {
             echo '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$thisNavitem->wpid.'" id="menu-item-'.$thisNavitem->wpid.'"><a href="http://'.$navitem->url.'"><img src="http://'.$navitem->image.'" class="sub-nav-image">'.stripcslashes($navitem->title).'</a></li>';
         }
