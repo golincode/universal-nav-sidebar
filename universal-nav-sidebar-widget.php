@@ -10,8 +10,6 @@ License: GPL2
 */
 class Universal_Nav_Sidebar_Widget extends WP_Widget {
 
-  protected $urlprefix = 'https://s3-eu-west-1.amazonaws.com/cached-menus/';
-
   /**
    * Register widget with WordPress
    */
@@ -48,7 +46,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
 
     if(! file_exists($file) || ($current_time - $expire_time > $file_time)) {
 
-      $result = $this->getItems();
+      $result = $this->getItems($instance);
       file_put_contents($file,$result);
     }
     else{
@@ -100,14 +98,22 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
    * @see WP_Widget::form()
    * @param array $instance Previously saved values from database.
    */
-  public function getItems() {
+  public function getItems($instance) {
     $fields = [];
 
-    $fields['api_key'] = $options[2]['api_key'];
     $fields['language'] =  substr(get_locale(),0,2);
     $fields['market_id'] = get_option('cpg_options_market_id');
 
-    $url = $this->urlprefix.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
+    if(isset($instance['aws_url']))
+    {
+      $urlprefix = rtrim($instance['aws_url'],'/');
+    }
+    else
+    {
+      $urlprefix = 'https://s3-eu-west-1.amazonaws.com';
+    }
+
+    $url = $urlprefix.'/cached-menus/'.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
 
     //open connection
     $ch = curl_init();
@@ -141,6 +147,23 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
     }
 
     echo '</ul>';
+  }
+
+  // Widget Backend 
+  public function form( $instance ) {
+    if ( isset( $instance[ 'aws_url' ] ) ) {
+      $aws_url = $instance[ 'aws_url' ];
+    }
+    else {
+      $aws_url = __( 'New AWL URL', 'wpb_widget_domain' );
+    }
+    // Widget admin form
+    ?>
+    <p>
+    <label for="<?php echo $this->get_field_id( 'aws_url' ); ?>"><?php _e( 'AWS URL:' ); ?></label> 
+    <input class="widefat" id="<?php echo $this->get_field_id( 'aws_url' ); ?>" name="<?php echo $this->get_field_name( 'aws_url' ); ?>" type="text" value="<?php echo esc_attr( $aws_url ); ?>" />
+    </p>
+    <?php 
   }
 
   /**
@@ -189,7 +212,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
    */
   public function update( $new_instance, $old_instance ) {
     $instance = array();
-    $instance['api_key'] = ( ! empty( $new_instance['api_key'] ) ) ? strip_tags( $new_instance['api_key'] ) : '';
+    $instance['aws_url'] = ( ! empty( $new_instance['aws_url'] ) ) ? strip_tags( $new_instance['aws_url'] ) : '';
 
     return $instance;
   }
