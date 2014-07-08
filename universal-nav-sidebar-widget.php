@@ -29,16 +29,19 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
    */
   public function widget( $args, $instance ) {
 
+
+
     $dir = explode('themes/', dirname(__FILE__));
 
     $cache = $dir[0] . '/cache';
 
     if ( !file_exists($cache) ) {
-        mkdir($cache, 0777, true);
+        mkdir($cache, 0755, true);
     }
+
     if(!is_writable($cache) )
     {
-       chmod($cache, 0777);
+       chmod($cache, 0755);
     }
 
     $file = $cache . '/latest_universal_nav_items_'.substr(get_locale(),0,2).'.txt';
