@@ -33,9 +33,14 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
 
     $cache = $dir[0] . '/cache';
 
-    if (!file_exists($cache)) {
+    if ( !file_exists($cache) ) {
         mkdir($cache, 0777, true);
     }
+    if(!is_writable($cache) )
+    {
+       chmod($cache, 0777);
+    }
+
     $file = $cache . '/latest_universal_nav_items_'.substr(get_locale(),0,2).'.txt';
     $current_time = time();
     $expire_time = 1 * 60 * 60;
@@ -71,6 +76,14 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
           echo '</div>';
           $this->buildSocial($result);
           echo '</div></nav>';
+
+          $subNavImages = $this->cpg_get_subnav_images_array($result);
+
+          $localisations = array(
+            'subNavImages' => $subNavImages,
+          );
+
+          wp_localize_script( 'core', 'navigationData', $localisations );
       }
       else
       {
@@ -92,6 +105,24 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
 
     //echo $args['after_widget'];
   }
+
+
+public function cpg_get_subnav_images_array($result) {
+
+  $nav_images = array();
+
+  if( is_array($result) ) {
+    foreach($result as $menu_item)
+    {
+      if(isset($menu_item->image) && $menu_item->image != '')
+      {
+        $nav_images['menu-item-'.$menu_item->wp_id] = $menu_item->image;
+      }
+    }
+  }
+
+  return $nav_images;
+}
 
   /**
    * Back-end widget form.
@@ -133,6 +164,7 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
    * @param array $instance Previously saved values from database.
    */
   public function buildMenu($result) {
+
     echo '<ul class="menu menu-main" id="menu-main-navigation">';
     if(is_array($result->navitems))
     {
@@ -140,16 +172,24 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
       {
         if($navitem->location == 'main' && $navitem->parent == 0)
         {
-          echo '<li id="menu-item-33" class="menu-item menu-itemmenu-item-'.$navitem->wpid.' '.$navitem->classes.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</li></a>';
-          $this->buildSubNav($result, $navitem);
-        } 
+          $content = $this->buildSubNav($result, $navitem);
+          $parent_class = ($content != '' ? 'menu-item-has-children' : '');
+          echo '<li id="menu-item-'.$navitem->wpid.'" class=" '.$parent_class.' menu-item menu-itemmenu-item-'.$navitem->wpid.' '.$navitem->classes.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a>';
+          if($content != '')
+          {
+            echo '<ul class="sub-menu">';
+            echo $content;
+            echo '</ul>';
+          }
+          echo '<li>';
+        }
       }
     }
 
     echo '</ul>';
   }
 
-  // Widget Backend 
+  // Widget Backend
   public function form( $instance ) {
     if ( isset( $instance[ 'aws_url' ] ) ) {
       $aws_url = $instance[ 'aws_url' ];
@@ -160,10 +200,10 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
     // Widget admin form
     ?>
     <p>
-    <label for="<?php echo $this->get_field_id( 'aws_url' ); ?>"><?php _e( 'AWS URL:' ); ?></label> 
+    <label for="<?php echo $this->get_field_id( 'aws_url' ); ?>"><?php _e( 'AWS URL:' ); ?></label>
     <input class="widefat" id="<?php echo $this->get_field_id( 'aws_url' ); ?>" name="<?php echo $this->get_field_name( 'aws_url' ); ?>" type="text" value="<?php echo esc_attr( $aws_url ); ?>" />
     </p>
-    <?php 
+    <?php
   }
 
   /**
@@ -173,16 +213,16 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
    */
   public function buildSubNav($result, $thisNavitem)
   {
+    $content = '';
     //if sub items exist
-    echo '<ul class="sub-menu">';
-      foreach($result->navitems as $navitem)
+    foreach($result->navitems as $navitem)
+    {
+      if($navitem->parent == $thisNavitem->wpid)
       {
-        if($navitem->parent == $thisNavitem->wpid)
-        {
-            echo '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$thisNavitem->wpid.'" id="menu-item-'.$thisNavitem->wpid.'"><a href="http://'.$navitem->url.'"><img src="http://'.$navitem->image.'" class="sub-nav-image">'.stripcslashes($navitem->title).'</a></li>';
-        }
+          $content .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$navitem->wpid.'" id="menu-item-'.$navitem->wpid.'"><a href="http://'.$navitem->url.'">'.stripcslashes($navitem->title).'</a></li>';
       }
-    echo '</ul>';
+    }
+    return $content;
   }
 
   /**
