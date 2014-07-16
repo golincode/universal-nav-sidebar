@@ -134,7 +134,8 @@ public function cpg_get_subnav_images_array($result) {
   public function getItems($instance) {
     $fields = [];
 
-    $fields['language'] =  substr(get_locale(),0,2);
+    $lang =  explode('-', get_locale());
+    $fields['language'] = strtolower($lang[0]);
     $fields['market_id'] = get_option('cpg_options_market_id');
 
     if(isset($instance['aws_url']))
@@ -221,7 +222,7 @@ public function cpg_get_subnav_images_array($result) {
     {
       if($navitem->parent == $thisNavitem->wpid)
       {
-          $content .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$navitem->wpid.'" id="menu-item-'.$navitem->wpid.'"><a href="http://'.$navitem->url.'">'.stripcslashes($navitem->title).'</a></li>';
+          $content .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$navitem->wpid.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a></li>';
       }
     }
     return $content;
