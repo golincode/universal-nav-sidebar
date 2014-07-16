@@ -134,7 +134,7 @@ public function cpg_get_subnav_images_array($result) {
   public function getItems($instance) {
     $fields = [];
 
-    $lang =  explode('-', get_locale());
+    $lang =  explode('_', get_locale());
     $fields['language'] = strtolower($lang[0]);
     $fields['market_id'] = get_option('cpg_options_market_id');
 
