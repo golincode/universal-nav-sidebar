@@ -70,9 +70,8 @@ class Universal_Nav_Sidebar_Widget extends WP_Widget {
       $result = json_decode($result);
       if($result->status == 1)
       {
-          echo '<a style="background-image:url('.$result->logo.')" href="" class="logo">';
-          bloginfo('name');
-          echo '</a><nav class="main-navigation">';
+          echo '<a href="/" class="logo"><img src="' . $result->logo . '" alt="' . get_bloginfo('name') . '"></a>';
+          echo '<nav class="main-navigation">';
           $this->buildMenu($result);
           echo '<div class="social-media-menu"><div class="title">';
           _e('Follow us on', 'dirtisgood');
