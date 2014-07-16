@@ -240,7 +240,7 @@ public function cpg_get_subnav_images_array($result) {
      {
         if($social_channel->name != '')
         {
-           echo ' <li><a href="'.$social_channel->name.'" target="_blank" class=" link-'.strtolower($social_channel->name).' ct-click-event" data-ct="Custom:Social media link clicks:'.$social_channel->name.'"><img src="'.$social_channel->image.'">'.$social_channel->name.'</a></li>';
+           echo ' <li><a href="'.$social_channel->url.'" target="_blank" class=" link-'.strtolower($social_channel->name).' ct-click-event" data-ct="Custom:Social media link clicks:'.$social_channel->name.'"><img src="'.$social_channel->image.'">'.$social_channel->name.'</a></li>';
         }
      }
      echo '</ul>';
