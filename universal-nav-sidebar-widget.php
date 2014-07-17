@@ -116,11 +116,13 @@ public function widget( $args, $instance ) {
                 $this->buildSocial($result);
                 echo '</div></nav>';
 
-                $subNavImages = $this->cpg_get_subnav_images_array($result);
-                $localisations = array(
-                    'subNavImages' => $subNavImages,
-                );
-                wp_localize_script( 'core', 'navigationData', $localisations );
+                $subNavImages = $this->cpg_get_subnav_images_array($result->navitems);
+
+                echo '<script type="text/javascript">
+                /* <![CDATA[ */
+                var navigationData = {"subNavImages":'.json_encode($subNavImages).'};
+                /* ]]> */
+                </script>';
             break;
 
         }
@@ -157,7 +159,7 @@ public function cpg_get_subnav_images_array($result) {
         {
             if(isset($menu_item->image) && $menu_item->image != '')
             {
-                $nav_images['menu-item-'.$menu_item->wp_id] = $menu_item->image;
+                $nav_images['menu-item-'.$menu_item->wpid] = $menu_item->image;
             }
         }
     }
