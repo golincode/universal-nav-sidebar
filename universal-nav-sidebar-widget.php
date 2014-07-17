@@ -85,12 +85,7 @@ public function widget( $args, $instance ) {
          $language_iso = strtolower($lang[0]);
     }
 
-
-
-
     $result = $this->check_cache($market_id, $language_iso);
-
-
 
     if($result)
     {
@@ -214,9 +209,10 @@ public function buildMenu($result) {
         {
             if($navitem->location == 'main' && $navitem->parent == 0)
             {
+                $current_class = $this->getCurrentClass($navitem->url);
                 $content = $this->buildSubNav($result, $navitem);
                 $parent_class = ($content != '' ? 'menu-item-has-children' : '');
-                echo '<li id="menu-item-'.$navitem->wpid.'" class=" '.$parent_class.' menu-item menu-itemmenu-item-'.$navitem->wpid.' '.$navitem->classes.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a>';
+                echo '<li id="menu-item-'.$navitem->wpid.'" class=" '.$parent_class.' '.$current_class.' menu-item menu-itemmenu-item-'.$navitem->wpid.' '.$navitem->classes.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a>';
                 if($content != '')
                 {
                     echo '<ul class="sub-menu">';
@@ -229,6 +225,19 @@ public function buildMenu($result) {
     }
 
     echo '</ul>';
+}
+
+public function getCurrentClass($current_url)
+{
+    $current_page = str_replace('http://', '', $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
+    $current_page = str_replace('https://', '', $current_page);
+    $current_page = rtrim($current_page,'/');
+    $current_menu_item = str_replace('http://', '', $current_url);
+    $current_menu_item = str_replace('https://', '', $current_menu_item);
+    $current_menu_item = rtrim($current_menu_item,'/');
+    $class = ($current_page == $current_menu_item) ? 'current-menu-item' : '';
+
+    return $class;
 }
 
 
