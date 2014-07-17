@@ -22,13 +22,7 @@ function __construct() {
     );
 }
 
-/**
-* Front-end display of widget.
-* @see WP_Widget::widget()
-* @param array $args     Widget arguments.
-* @param array $instance Saved values from database.
-*/
-public function widget( $args, $instance ) {
+public function check_cache($market_id, $language_iso) {
 
     $dir = explode('themes/', dirname(__FILE__));
     $cache = $dir[0] . '/cache';
@@ -42,9 +36,10 @@ public function widget( $args, $instance ) {
         chmod($cache, 0755);
     }
 
-    $file = $cache . '/latest_universal_nav_items_'.substr(get_locale(),0,2).'.txt';
     $current_time = time();
     $expire_time = 1 * 60 * 60;
+
+    $file = $cache . '/latest_universal_nav_items_'.$language_iso.'.txt';
 
     if(file_exists($file)) {
         $file_time = filemtime($file);
@@ -52,13 +47,50 @@ public function widget( $args, $instance ) {
 
     if(! file_exists($file) || ($current_time - $expire_time > $file_time))
     {
-        $result = $this->getItems($instance);
+        $result = $this->getItems($instance, $market_id, $language_iso);
         file_put_contents($file,$result);
     }
     else
     {
         $result = file_get_contents($file);
     }
+
+    return $result;
+
+}
+
+/**
+* Front-end display of widget.
+* @see WP_Widget::widget()
+* @param array $args     Widget arguments.
+* @param array $instance Saved values from database.
+*/
+public function widget( $args, $instance ) {
+
+    $lang =  explode('_', get_locale());
+    if(isset($args['market']))
+    {
+        $market_id = $args['market'];
+    }
+    else
+    {
+        $market_id = get_option('cpg_options_market_id');
+    }
+    if(isset($args['language']))
+    {
+        $language_iso = $args['language'];
+    }
+    else
+    {
+         $language_iso = strtolower($lang[0]);
+    }
+
+
+
+
+    $result = $this->check_cache($market_id, $language_iso);
+
+
 
     if($result)
     {
@@ -143,13 +175,7 @@ public function cpg_get_subnav_images_array($result) {
 * @see WP_Widget::form()
 * @param array $instance Previously saved values from database.
 */
-public function getItems($instance) {
-
-    $fields = [];
-
-    $lang =  explode('_', get_locale());
-    $fields['language'] = strtolower($lang[0]);
-    $fields['market_id'] = get_option('cpg_options_market_id');
+public function getItems($instance, $market_id, $language_iso) {
 
     if(isset($instance['aws_url']))
     {
@@ -160,7 +186,7 @@ public function getItems($instance) {
         $urlprefix = 'https://s3-eu-west-1.amazonaws.com';
     }
 
-    $url = $urlprefix.'/cached-menus/'.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
+    $url = $urlprefix.'/cached-menus/'.'menu-'.$market_id.'-'.$language_iso.'.json';
 
     //open connection
     $ch = curl_init();
@@ -236,9 +262,12 @@ public function buildSocial($result) {
     echo '<ul class="menu">';
     foreach($result->social_channels as $social_channel)
     {
-        if($social_channel->name != '')
+        if($social_channel->type != '')
         {
-            echo ' <li><a href="'.$social_channel->url.'" target="_blank" class=" link-'.strtolower($social_channel->name).' ct-click-event" data-ct="Custom:Social media link clicks:'.$social_channel->name.'"><img src="'.$social_channel->image.'">'.$social_channel->name.'</a></li>';
+            echo ' <li>
+            <a data-ct="Custom:Social media link clicks:'.$social_channel->type.'" class="'.$social_channel->type.' ct-click-event" target="_blank" href="'.$social_channel->url.'"><i class="icon-'.$social_channel->type.'"></i>';
+            echo ($social_channel->type == 'youtube') ? 'YouTube' : ucfirst($social_channel->type);
+            echo '</a></li>';
         }
     }
     echo '</ul>';
