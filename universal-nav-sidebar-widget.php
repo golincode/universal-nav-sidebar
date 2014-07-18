@@ -39,7 +39,7 @@ public function check_cache($market_id, $language_iso) {
     $current_time = time();
     $expire_time = 1 * 60 * 60;
 
-    $file = $cache . '/latest_universal_nav_items_'.$language_iso.'.txt';
+    $file = $cache . '/latest_universal_nav_items_'.$market_id.'_'.$language_iso.'.txt';
 
     if(file_exists($file)) {
         $file_time = filemtime($file);
