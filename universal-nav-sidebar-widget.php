@@ -107,7 +107,7 @@ public function widget( $args, $instance ) {
                 $this->outputFooterMenu($result);
             break;
 
-            case 'social-menu':
+            case 'social-media':
                 $this->buildSocial($result);
             break;
 
