@@ -107,14 +107,13 @@ public function widget( $args, $instance ) {
                 $this->outputFooterMenu($result);
             break;
 
-            default:
-                echo '<nav class="main-navigation">';
-                $this->buildMenu($result);
-                echo '<div class="social-media-menu"><div class="title">';
-                _e('Follow us on', 'dirtisgood');
-                echo '</div>';
+            case 'social-menu':
                 $this->buildSocial($result);
-                echo '</div></nav>';
+            break;
+
+            default:
+
+                $this->buildMenu($result);
 
                 $subNavImages = $this->cpg_get_subnav_images_array($result->navitems);
 
@@ -212,9 +211,11 @@ public function buildMenu($result) {
             if($navitem->location == 'main' && $navitem->parent == 0)
             {
                 $current_class = $this->getCurrentClass($navitem->url);
-                $content = $this->buildSubNav($result, $navitem);
+
+                list($content, $current_menu_parent) = $this->buildSubNav($result, $navitem);
+
                 $parent_class = ($content != '' ? 'menu-item-has-children' : '');
-                echo '<li id="menu-item-'.$navitem->wpid.'" class=" '.$parent_class.' '.$current_class.' menu-item menu-itemmenu-item-'.$navitem->wpid.' '.$navitem->classes.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a>';
+                echo '<li id="menu-item-'.$navitem->wpid.'" class=" '.$parent_class.' '.$current_class.' '.$current_menu_parent.' menu-item menu-itemmenu-item-'.$navitem->wpid.' '.$navitem->classes.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a>';
                 if($content != '')
                 {
                     echo '<ul class="sub-menu">';
@@ -239,6 +240,8 @@ public function getCurrentClass($current_url)
     $current_menu_item = rtrim($current_menu_item,'/');
     $class = ($current_page == $current_menu_item) ? 'current-menu-item' : '';
 
+
+
     return $class;
 }
 
@@ -251,16 +254,26 @@ public function getCurrentClass($current_url)
 public function buildSubNav($result, $thisNavitem) {
 
     $content = '';
+    $current_menu_parent = 'not-this-one';
     //if sub items exist
     foreach($result->navitems as $navitem)
     {
         if($navitem->parent == $thisNavitem->wpid)
         {
             $content .= '<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-'.$navitem->wpid.'" id="menu-item-'.$navitem->wpid.'"><a href="'.$navitem->url.'">'.stripcslashes($navitem->title).'</a></li>';
+            if($this->getCurrentClass($navitem->url) == 'current-menu-item')
+            {
+                $current_menu_parent = 'current-menu-parent';
+            }
         }
+
     }
 
-    return $content;
+    //if this is a sub-nav item
+    //give parent the current parent class -itme.
+
+
+    return array($content, $current_menu_parent);
 }
 
 /**
