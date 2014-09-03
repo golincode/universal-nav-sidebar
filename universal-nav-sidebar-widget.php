@@ -182,7 +182,7 @@ public function getItems($instance, $market_id, $language_iso) {
         $urlprefix = 'https://s3-eu-west-1.amazonaws.com';
     }
 
-    $url = $urlprefix.'/cached-menus/'.'menu-'.$market_id.'-'.$language_iso.'.json';
+    $url = $urlprefix.'/'.'menu-'.$market_id.'-'.$language_iso.'.json';
 
     //open connection
     $ch = curl_init();
@@ -254,7 +254,7 @@ public function getCurrentClass($current_url)
 public function buildSubNav($result, $thisNavitem) {
 
     $content = '';
-    $current_menu_parent = 'not-this-one';
+    $current_menu_parent = '';
     //if sub items exist
     foreach($result->navitems as $navitem)
     {
@@ -356,7 +356,7 @@ public function getFooterItems($instance) {
         $urlprefix = 'https://s3-eu-west-1.amazonaws.com';
     }
 
-    $url = $urlprefix.'/cached-menus/'.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
+    $url = $urlprefix.'/'.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
 
     //open connection
     $ch = curl_init();
