@@ -179,7 +179,7 @@ public function getItems($instance, $market_id, $language_iso) {
     }
     else
     {
-        $urlprefix = 'https://s3-eu-west-1.amazonaws.com';
+        $urlprefix = 'https://universal-nav.s3.amazonaws.com';
     }
 
     $url = $urlprefix.'/'.'menu-'.$market_id.'-'.$language_iso.'.json';
@@ -353,7 +353,7 @@ public function getFooterItems($instance) {
     }
     else
     {
-        $urlprefix = 'https://s3-eu-west-1.amazonaws.com';
+        $urlprefix = 'https://universal-nav.s3.amazonaws.com';
     }
 
     $url = $urlprefix.'/'.'menu-'.$fields['market_id'].'-'.$fields['language'].'.json';
