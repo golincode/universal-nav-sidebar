@@ -223,11 +223,16 @@ public function buildMenu($result) {
                     echo '</ul>';
                 }
                 echo '<li>';
+
             }
         }
     }
 
     echo '</ul>';
+    foreach($result->navitems as $navitem)
+    {
+         echo '<!--'.$navitem->url.'-->';
+    }
 }
 
 public function getCurrentClass($current_url)
@@ -239,8 +244,6 @@ public function getCurrentClass($current_url)
     $current_menu_item = str_replace('https://', '', $current_menu_item);
     $current_menu_item = rtrim($current_menu_item,'/');
     $class = ($current_page == $current_menu_item) ? 'current-menu-item' : '';
-
-
 
     return $class;
 }
