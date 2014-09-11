@@ -189,6 +189,8 @@ public function getItems($instance, $market_id, $language_iso) {
     //set the url, number of POST vars, POST data
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,15);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     $result = curl_exec($ch);
     curl_close($ch);
 
@@ -366,6 +368,8 @@ public function getFooterItems($instance) {
     //set the url, number of POST vars, POST data
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,15);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     $result = curl_exec($ch);
     curl_close($ch);
 
