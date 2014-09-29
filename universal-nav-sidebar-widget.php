@@ -68,6 +68,7 @@ public function check_cache($market_id, $language_iso) {
 public function widget( $args, $instance ) {
 
     $lang =  explode('_', get_locale());
+
     if(isset($args['market']))
     {
         $market_id = $args['market'];
@@ -89,45 +90,38 @@ public function widget( $args, $instance ) {
 
     if($result)
     {
-
         $result = json_decode($result);
 
         if($result->status == 1)
         {
+            switch ($args['section']) {
 
-        //echo $args['before_widget'];
+                case 'logo':
+                    echo '<a class="logo" href="/"><img alt="' . get_bloginfo('name') . '" src="' . $result->logo . '"></a>';
+                break;
 
-        switch ($args['section']) {
+                case 'footer':
+                    $this->outputFooterMenu($result);
+                break;
 
-            case 'logo':
-                echo '<a class="logo" href="/"><img alt="' . get_bloginfo('name') . '" src="' . $result->logo . '"></a>';
-            break;
+                case 'social-media':
+                    $this->buildSocial($result);
+                break;
 
-            case 'footer':
-                $this->outputFooterMenu($result);
-            break;
+                default:
 
-            case 'social-media':
-                $this->buildSocial($result);
-            break;
+                    $this->buildMenu($result);
 
-            default:
+                    $subNavImages = $this->cpg_get_subnav_images_array($result->navitems);
 
-                $this->buildMenu($result);
+                    echo '<script type="text/javascript">
+                    /* <![CDATA[ */
+                    var navigationData = {"subNavImages":'.json_encode($subNavImages).'};
+                    /* ]]> */
+                    </script>';
+                break;
 
-                $subNavImages = $this->cpg_get_subnav_images_array($result->navitems);
-
-                echo '<script type="text/javascript">
-                /* <![CDATA[ */
-                var navigationData = {"subNavImages":'.json_encode($subNavImages).'};
-                /* ]]> */
-                </script>';
-            break;
-
-        }
-
-        //echo $args['after_widget'];
-
+            }
         }
         else
         {
@@ -231,10 +225,7 @@ public function buildMenu($result) {
     }
 
     echo '</ul>';
-    foreach($result->navitems as $navitem)
-    {
-         echo '<!--'.$navitem->url.'-->';
-    }
+
 }
 
 public function getCurrentClass($current_url)
@@ -276,8 +267,6 @@ public function buildSubNav($result, $thisNavitem) {
 
     //if this is a sub-nav item
     //give parent the current parent class -itme.
-
-
     return array($content, $current_menu_parent);
 }
 
@@ -365,7 +354,6 @@ public function getFooterItems($instance) {
 
     //open connection
     $ch = curl_init();
-    //set the url, number of POST vars, POST data
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,15);
@@ -378,7 +366,6 @@ public function getFooterItems($instance) {
     }
 }
 
-// register Foo_Widget widget
 function register_universal_nav_sidebar_widget() {
     register_widget( 'Universal_Nav_Sidebar_Widget' );
 }
