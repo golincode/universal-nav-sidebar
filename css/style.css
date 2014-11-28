@@ -1,0 +1,10 @@
+.uni-nav-error {
+	text-align:center;
+	color:#a94442;
+	background-color:#f2dede;
+	padding:5px;
+	margin:5px auto;
+	border-radius:10px;
+	border:1px solid #a94442;
+	width:90%
+}
